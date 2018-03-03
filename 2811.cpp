@@ -1,84 +1,79 @@
-#include<cstdio>
-#include<algorithm>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
 
 using namespace std;
 
-int press[5][6],mybackup[5][6],tmp[6];
+int init_light[7][8],now_light[7][8];
+int button[7][8] = {0};
 
-int mynot(int a){
-    if(a) return 0;
-    return 1;
+void initial_now_light(){
+    for(int i = 1; i <= 5; i++)
+        for(int j = 1; j <=6; j++)
+        now_light[i][j] = init_light[i][j];
 }
 
-void presslight(int i, int j,int button){
-    if(button){
-        mybackup[i][j] = mynot( mybackup[i][j] );
-        if(i > 0) mybackup[i-1][j] = mynot(mybackup[i-1][j]);
-        if(j > 0) mybackup[i][j-1] = mynot(mybackup[i][j-1]);
-        if(i < 4) mybackup[i+1][j] = mynot(mybackup[i+1][j]);
-        if(j < 5) mybackup[i][j+1] = mynot(mybackup[i][j+1]);
-    }
+void change_light(int i, int j){
+    if(now_light[i][j]) now_light[i][j] = 0;
+    else now_light[i][j] = 1;
+}
+
+void one_button(int i, int j){
+    button[i][j] = 1;
+    change_light(i,j);
+    change_light(i+1,j);
+    change_light(i,j+1);
+    change_light(i-1,j);
+    change_light(i,j-1);
 }
 
 bool isOK(){
-    for(int i = 0; i < 6; i++) presslight(0,i,tmp[i]);
-
-    for(int i = 1; i < 5; i++){
-        for(int j = 0; j < 6; j++)
-            presslight(i,j,mybackup[i-1][j]);
+    for(int j = 1; j <= 6; j++){
+        if(button[1][j]) one_button(1,j);
     }
-
-    for(int j = 0; j < 6; j++)
-        if(mybackup[4][j] == 1) return false;
-
+    for(int i = 2; i <= 5; i++)
+    for(int j = 1; j <= 6; j++){
+        if(now_light[i-1][j]) one_button(i,j);
+    }
+    for(int j = 1; j <= 6; j++){
+       if(now_light[5][j]) return false;
+    }
     return true;
 }
 
-void backup(){
-    for(int i = 0; i < 5; i++)
-        for(int j = 0; j < 6; j++)
-            mybackup[i][j] = press[i][j];
-}
 
-int main(){
-    //freopen("input.txt","r",stdin);
+int main()
+{
 
-    for(int i = 0; i < 5 ; i++){
-        for(int j = 0; j < 6; j++){
-            scanf("%d",&press[i][j]);
-            mybackup[i][j] = press[i][j];
+    for(int i = 1; i <= 5; i++)
+    for(int j = 1; j <= 6; j++){
+        scanf("%d",&init_light[i][j]);
+    }
+
+    for(button[1][1] = 0; button[1][1] < 2; button[1][1]++)
+    for(button[1][2] = 0; button[1][2] < 2; button[1][2]++)
+    for(button[1][3] = 0; button[1][3] < 2; button[1][3]++)
+    for(button[1][4] = 0; button[1][4] < 2; button[1][4]++)
+    for(button[1][5] = 0; button[1][5] < 2; button[1][5]++)
+    for(button[1][6] = 0; button[1][6] < 2; button[1][6]++){
+        initial_now_light();
+        if(isOK()){
+            for(int i = 2; i <= 5; i++)
+            for(int j = 1; j <= 6; j++) button[i][j] = 0;
+
+            initial_now_light();
+            isOK();
+            for(int i = 1; i <=5; i++)
+            for(int j = 1; j <= 6; j++){
+                printf("%d",button[i][j]);
+                if(j == 6) printf("\n");
+                else printf(" ");
+            }
+
+
+            return 0;
         }
     }
-    for(int i1 = 0; i1 < 2; i1++)
-        for(int i2 = 0; i2 < 2; i2++)
-            for(int i3 = 0; i3 < 2; i3++)
-                for(int i4 = 0; i4 < 2; i4++)
-                    for(int i5 = 0; i5 < 2; i5++)
-                        for(int i6 = 0; i6 < 2; i6++){
-                            tmp[0] = i1;
-                            tmp[1] = i2;
-                            tmp[2] = i3;
-                            tmp[3] = i4;
-                            tmp[4] = i5;
-                            tmp[5] = i6;
-                            if(isOK()){
-                                backup();
-                                for(int k = 0; k < 5; k++) printf("%d ",tmp[k]);
-                                printf("%d\n",tmp[5]);
-
-                                for(int k = 0; k < 6; k++) presslight(0,k,tmp[k]);
-
-                                for(int k = 1; k < 5; k++)
-                                    for(int t = 0; t < 6; t++){
-                                        printf("%d",mybackup[k-1][t]);
-                                        if(t == 5) printf("\n");
-                                        else printf(" ");
-                                        presslight(k,t,mybackup[k-1][t]);
-                                    }
-                                return 0;
-                            }
-                            backup();
-                        }
 
     return 0;
 }
