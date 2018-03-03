@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -50,17 +51,19 @@ int main()
         scanf("%d",&init_light[i][j]);
     }
 
-    for(button[1][1] = 0; button[1][1] < 2; button[1][1]++)
-    for(button[1][2] = 0; button[1][2] < 2; button[1][2]++)
-    for(button[1][3] = 0; button[1][3] < 2; button[1][3]++)
-    for(button[1][4] = 0; button[1][4] < 2; button[1][4]++)
-    for(button[1][5] = 0; button[1][5] < 2; button[1][5]++)
-    for(button[1][6] = 0; button[1][6] < 2; button[1][6]++){
+    int remain,max_cnt = (int)pow(2,6);
+    for(int cnt = 0; cnt < max_cnt; cnt++){
+        remain = cnt;
+        for(int k = 1; k <= 6; k++){
+            button[1][k] = remain % 2;
+            remain /= 2;
+        }
+        
         initial_now_light();
         if(isOK()){
             for(int i = 2; i <= 5; i++)
             for(int j = 1; j <= 6; j++) button[i][j] = 0;
-
+            
             initial_now_light();
             isOK();
             for(int i = 1; i <=5; i++)
@@ -69,11 +72,8 @@ int main()
                 if(j == 6) printf("\n");
                 else printf(" ");
             }
-
-
             return 0;
         }
     }
-
     return 0;
 }
