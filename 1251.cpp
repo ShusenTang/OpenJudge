@@ -3,7 +3,6 @@
 #include<string.h>
 #define MAXN 30
 #define INF 99999999
-
 using namespace std;
 
 int n,graph[MAXN][MAXN],visited[MAXN],d[MAXN];
